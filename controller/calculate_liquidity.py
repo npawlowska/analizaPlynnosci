@@ -108,4 +108,3 @@ def calculate_liquidity(data):
         "ZERO1": zero1,
         "ZERO2": zero2,
     }
-
