@@ -93,62 +93,58 @@ def create_main_window():
         period_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         period_frame.pack(pady=10)
 
-        tk.Label(period_frame, text="Okres 1:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
+        tk.Label(period_frame, text="Wybierz okresy:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
                                                                                                          padx=5)
+        # Definicja ramki dla okresów przed jej użyciem
+        periods_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
+        periods_frame.pack(pady=10)
 
-        # OptionMenu dla Okres 1
-        period1_menu = tk.OptionMenu(period_frame, period1_var, *periods)
-        period1_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
-        period1_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
-        period1_menu.pack(side=tk.LEFT, padx=5)
+        period_vars = []
+        periods = ["przed COVID", "w trakcie COVID", "po COVID", "cały okres"]
 
-        tk.Label(period_frame, text="Okres 2:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
-                                                                                                         padx=5)
+        def add_period_row():
+            frame = tk.Frame(periods_frame, bg=BACKGROUND_COLOR)
+            frame.pack(pady=5)
 
-        # OptionMenu dla Okres 2
-        period2_menu = tk.OptionMenu(period_frame, period2_var, *periods)
-        period2_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
-        period2_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
-        period2_menu.pack(side=tk.LEFT, padx=5)
+            period_var = tk.StringVar(root, value=periods[0])
+            tk.Label(frame, text="Okres:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
+            tk.OptionMenu(frame, period_var, *periods).pack(side=tk.LEFT)
+            period_vars.append(period_var)
 
-        # Frame dla wyboru wskaźnika
+        add_period_row()
+        tk.Button(root, text="Dodaj okres", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR,
+                  command=add_period_row).pack(pady=10)
+
         metric_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         metric_frame.pack(pady=10)
 
-        # Definicja dostępnych wskaźników
         metrics = ["Relative Volume (RV)", "Illiquidity Measure (ILLIQ)", "ZERO1", "ZERO2"]
-
         tk.Label(metric_frame, text="Wskaźnik:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
                                                                                                           padx=5)
-
-        # OptionMenu dla wyboru wskaźnika
-        metric_menu = tk.OptionMenu(metric_frame, metric_var, *metrics)
-        metric_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
-        metric_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
-        metric_menu.pack(side=tk.LEFT, padx=5)
+        tk.OptionMenu(metric_frame, metric_var, *metrics).pack(side=tk.LEFT, padx=5)
 
         def generate_company_comparison_chart():
             selected_companies = [var.get() for var in company_vars]
-            period1 = period1_var.get()
-            period2 = period2_var.get()
+            selected_periods = [var.get() for var in period_vars]
             selected_metric = metric_var.get()
+
+            if len(selected_periods) < 2:
+                print("Musisz wybrać co najmniej dwa okresy!")
+                return
 
             results = {}
             for company in selected_companies:
                 raw_data = load_data_for_company_and_date(company, "2017-01-01", "2024-09-30")
-                data1 = filter_data_by_period(raw_data, period1)
-                data2 = filter_data_by_period(raw_data, period2)
-
-                if not data1.empty and not data2.empty:
-                    metrics1 = calculate_liquidity(data1)
-                    metrics2 = calculate_liquidity(data2)
-                    results[company] = {
-                        period1: metrics1.get(selected_metric, 0.0),
-                        period2: metrics2.get(selected_metric, 0.0),
-                    }
+                company_results = {}
+                for period in selected_periods:
+                    filtered_data = filter_data_by_period(raw_data, period)
+                    if not filtered_data.empty:
+                        metrics = calculate_liquidity(filtered_data)
+                        company_results[period] = metrics.get(selected_metric, 0.0)
+                results[company] = company_results
 
             if results:
-                generate_comparison_chart(root, results, [period1, period2], background_color=BACKGROUND_COLOR)
+                generate_comparison_chart(root, results, selected_periods, background_color=BACKGROUND_COLOR)
 
         tk.Button(root, text="Generuj wykres", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=generate_company_comparison_chart).pack(pady=10)
         tk.Button(root, text="Powrót", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_comparison_menu).pack(pady=10)
@@ -164,52 +160,104 @@ def create_main_window():
 
         company_var = tk.StringVar(root, value=get_companies()[0])
         periods = ["przed COVID", "w trakcie COVID", "po COVID", "cały okres"]
-        period1_var = tk.StringVar(root, value=periods[0])
-        period2_var = tk.StringVar(root, value=periods[1])
 
+        # Ramka dla wyboru spółki
         company_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         company_frame.pack(pady=10)
 
-        tk.Label(company_frame, text="Spółka:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,padx=5)
+        tk.Label(company_frame, text="Spółka:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
+                                                                                                         padx=5)
         company_menu = tk.OptionMenu(company_frame, company_var, *get_companies())
-        company_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
-        company_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
+        company_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))
+        company_menu["menu"].config(bg="#ECE4DB", fg="#333333")
         company_menu.pack(side=tk.LEFT, padx=5)
 
+        # Ramka dla wyboru okresów
         period_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         period_frame.pack(pady=10)
 
-        tk.Label(period_frame, text="Okres 1:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT, padx=5)
-        period1_menu = tk.OptionMenu(period_frame, period1_var, *periods)
-        period1_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
-        period1_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
-        period1_menu.pack(side=tk.LEFT, padx=5)
+        tk.Label(period_frame, text="Wybierz okresy:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(
+            side=tk.LEFT, padx=5)
 
-        tk.Label(period_frame, text="Okres 2:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT, padx=5)
-        period2_menu = tk.OptionMenu(period_frame, period2_var, *periods)
-        period2_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
-        period2_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
-        period2_menu.pack(side=tk.LEFT, padx=5)
+        periods_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
+        periods_frame.pack(pady=10)
+
+        period_vars = []
+
+        def add_period_row():
+            frame = tk.Frame(periods_frame, bg=BACKGROUND_COLOR)
+            frame.pack(pady=5)
+
+            period_var = tk.StringVar(root, value=periods[0])
+            tk.Label(frame, text="Okres:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
+            tk.OptionMenu(frame, period_var, *periods).pack(side=tk.LEFT)
+            period_vars.append(period_var)
+
+        # Dodanie pierwszego wyboru okresu
+        add_period_row()
+
+        tk.Button(root, text="Dodaj okres", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR,
+                  command=add_period_row).pack(pady=10)
+
+        # Ramka dla wyboru wskaźników
+        metric_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
+        metric_frame.pack(pady=10)
+
+        metrics = ["Relative Volume (RV)", "Illiquidity Measure (ILLIQ)", "ZERO1", "ZERO2"]
+        metric_vars = []
+
+        def add_metric_row():
+            frame = tk.Frame(metric_frame, bg=BACKGROUND_COLOR)
+            frame.pack(pady=5)
+
+            metric_var = tk.StringVar(root, value=metrics[0])
+            tk.Label(frame, text="Wskaźnik:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
+            tk.OptionMenu(frame, metric_var, *metrics).pack(side=tk.LEFT)
+            metric_vars.append(metric_var)
+
+        # Dodanie pierwszego wskaźnika
+        add_metric_row()
+
+        tk.Button(root, text="Dodaj wskaźnik", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR,
+                  command=add_metric_row).pack(pady=10)
 
         def generate_all_metrics_chart():
             selected_company = company_var.get()
-            period1 = period1_var.get()
-            period2 = period2_var.get()
+            selected_periods = [var.get() for var in period_vars]
+            selected_metrics = [var.get() for var in metric_vars]
+
+            if len(selected_periods) < 1:
+                print("Musisz wybrać chociaż jeden okres!")
+                return
 
             raw_data = load_data_for_company_and_date(selected_company, "2017-01-01", "2024-09-30")
-            data1 = filter_data_by_period(raw_data, period1)
-            data2 = filter_data_by_period(raw_data, period2)
 
-            if not data1.empty and not data2.empty:
-                metrics1 = calculate_liquidity(data1)
-                metrics2 = calculate_liquidity(data2)
+            print("Załadowane dane:", raw_data)  # Sprawdzenie, czy dane zostały załadowane
 
-                # Przygotowanie danych do wykresu
-                results = {metric: {period1: metrics1[metric], period2: metrics2[metric]} for metric in metrics1.keys()}
-                generate_comparison_chart(root, results, [period1, period2], background_color=BACKGROUND_COLOR)
+            results = {}
+
+            for metric in selected_metrics:
+                metric_results = {}
+                for period in selected_periods:
+                    filtered_data = filter_data_by_period(raw_data, period)
+                    print(f"Debug - Dane dla okresu {period}:", filtered_data)
+
+                    if not filtered_data.empty:
+                        metrics = calculate_liquidity(filtered_data)
+                        print(f"Debug - Wyniki dla okresu {period}:", metrics)
+                        metric_results[period] = metrics.get(metric, 0.0)
+
+                results[metric] = metric_results
+
+                print("Debug - Wyniki przekazywane do wykresu:", results)
+
+            if results:
+                generate_comparison_chart(root, results, selected_periods, background_color=BACKGROUND_COLOR)
 
         tk.Button(root, text="Generuj wykres", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=generate_all_metrics_chart).pack(pady=10)
         tk.Button(root, text="Powrót", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_comparison_menu).pack(pady=10)
 
     show_calculation_menu()
     root.mainloop()
+
+

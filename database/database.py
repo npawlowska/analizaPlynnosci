@@ -37,7 +37,7 @@ def load_data_for_company_and_date(company, start_date, end_date):
         try:
             cursor = conn.cursor(dictionary=True)
             query = """
-                SELECT data, zamkniecie, wolumen
+                SELECT data, spolka, zamkniecie, wolumen, liczba_akcji
                 FROM akcje
                 WHERE spolka = %s AND data BETWEEN %s AND %s
             """
