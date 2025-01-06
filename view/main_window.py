@@ -118,7 +118,7 @@ def create_main_window():
         metric_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         metric_frame.pack(pady=10)
 
-        metrics = ["Relative Volume (RV)", "Illiquidity Measure (ILLIQ)", "ZERO1", "ZERO2"]
+        metrics = ["Relative Volume (RV)", "ZERO1", "ZERO2"]
         tk.Label(metric_frame, text="Wskaźnik:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
                                                                                                           padx=5)
         tk.OptionMenu(metric_frame, metric_var, *metrics).pack(side=tk.LEFT, padx=5)
@@ -128,13 +128,13 @@ def create_main_window():
             selected_periods = [var.get() for var in period_vars]
             selected_metric = metric_var.get()
 
-            if len(selected_periods) < 2:
-                print("Musisz wybrać co najmniej dwa okresy!")
+            if len(selected_periods) < 1:
+                print("Musisz wybrać jakiś okres!")
                 return
 
             results = {}
             for company in selected_companies:
-                raw_data = load_data_for_company_and_date(company, "2017-01-01", "2024-09-30")
+                raw_data = load_data_for_company_and_date(company, "2017-01-02", "2024-09-30")
                 company_results = {}
                 for period in selected_periods:
                     filtered_data = filter_data_by_period(raw_data, period)
@@ -203,7 +203,7 @@ def create_main_window():
         metric_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         metric_frame.pack(pady=10)
 
-        metrics = ["Relative Volume (RV)", "Illiquidity Measure (ILLIQ)", "ZERO1", "ZERO2"]
+        metrics = ["Relative Volume (RV)", "ZERO1", "ZERO2"]
         metric_vars = []
 
         def add_metric_row():
@@ -230,7 +230,7 @@ def create_main_window():
                 print("Musisz wybrać chociaż jeden okres!")
                 return
 
-            raw_data = load_data_for_company_and_date(selected_company, "2017-01-01", "2024-09-30")
+            raw_data = load_data_for_company_and_date(selected_company, "2017-01-02", "2024-09-30")
 
             print("Załadowane dane:", raw_data)  # Sprawdzenie, czy dane zostały załadowane
 

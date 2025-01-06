@@ -44,26 +44,6 @@ def calculate_relative_volume(data):
 
     return data['RV']
 
-def calculate_illiquidity(data):
-    """
-        Oblicza Illiquidity Measure (ILLIQ).
-        """
-    valid_data = data[data['wolumen'] > 0]  # Filtrowanie dni z zerowym wolumenem
-
-    if valid_data.empty:
-        return 0  # Brak danych do obliczeń
-
-    # Konwersja kolumn do typu float
-    valid_data['Return'] = pd.to_numeric(valid_data['Return'], errors='coerce')
-    valid_data['wolumen'] = pd.to_numeric(valid_data['wolumen'], errors='coerce')
-
-    # Wykluczenie wierszy z NaN w 'Return' lub 'wolumen'
-    valid_data = valid_data.dropna(subset=['Return', 'wolumen'])
-
-    illiq_values = valid_data['Return'].abs() / valid_data['wolumen']
-    print("Debug - Dane do ILLIQ:")
-    print(valid_data[['Return', 'wolumen']].head())
-    return illiq_values.mean()  * 1e6 # Normalizacja przez mnożenie przez 1e6
 
 def calculate_zero1(data):
     """
@@ -136,19 +116,17 @@ def calculate_liquidity(data):
     rv = rv_series.mean()  # Agregacja: średnia RV dla całego okresu
     print(f"Debug - RV (średnia): {rv}")  # Sprawdzenie RV
 
-    illiq = calculate_illiquidity(data)  # Illiquidity Measure
     zero1 = calculate_zero1(data)  # ZERO1
     print(f"Debug - ZERO1: {zero1}")
     zero2 = calculate_zero2(data)  # ZERO2
     print(f"Debug - Wynik ZERO2: {zero2}")
 
     # Debugowanie wyników końcowych
-    print(f"Final Results - RV: {rv}, ILLIQ: {illiq}, ZERO1: {zero1}, ZERO2: {zero2}")
+    print(f"Final Results - RV: {rv}, ZERO1: {zero1}, ZERO2: {zero2}")
 
     # Zwracanie wyników
     return {
         "Relative Volume (RV)": rv,
-        "Illiquidity Measure (ILLIQ)": illiq,
         "ZERO1": zero1,
         "ZERO2": zero2,
     }

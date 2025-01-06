@@ -92,6 +92,3 @@ if __name__ == "__main__":
     companies = get_companies()
     print(f"Lista spółek: {companies}")
 
-    # Test pobierania danych dla spółki
-    data = load_data_for_company_and_date("ACT", "2020-01-01", "2020-12-31")
-    print(f"Dane dla ACT: {data}")
