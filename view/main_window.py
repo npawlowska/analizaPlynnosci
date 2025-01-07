@@ -82,6 +82,14 @@ def create_main_window():
             company_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
             company_menu.pack(side=tk.LEFT)
 
+            tk.Button(
+                frame,
+                text="Usuń",
+                font=FONT_MAIN,
+                bg="#FEC89A",
+                command=lambda: [frame.destroy(), company_vars.remove(company_var)]
+            ).pack(side=tk.LEFT, padx=10)
+
             company_vars.append(company_var)
 
         # Dodajemy pierwszy wiersz wyboru spółki
@@ -109,6 +117,15 @@ def create_main_window():
             period_var = tk.StringVar(root, value=periods[0])
             tk.Label(frame, text="Okres:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
             tk.OptionMenu(frame, period_var, *periods).pack(side=tk.LEFT)
+
+            tk.Button(
+                frame,
+                text="Usuń",
+                font=FONT_MAIN,
+                bg="#FEC89A",
+                command=lambda: [frame.destroy(), period_vars.remove(period_var)]
+            ).pack(side=tk.LEFT, padx=10)
+
             period_vars.append(period_var)
 
         add_period_row()
@@ -191,6 +208,15 @@ def create_main_window():
             period_var = tk.StringVar(root, value=periods[0])
             tk.Label(frame, text="Okres:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
             tk.OptionMenu(frame, period_var, *periods).pack(side=tk.LEFT)
+
+            tk.Button(
+                frame,
+                text="Usuń",
+                font=FONT_MAIN,
+                bg="#FEC89A",
+                command=lambda: [frame.destroy(), period_vars.remove(period_var)]
+            ).pack(side=tk.LEFT, padx=10)
+
             period_vars.append(period_var)
 
         # Dodanie pierwszego wyboru okresu
@@ -213,6 +239,15 @@ def create_main_window():
             metric_var = tk.StringVar(root, value=metrics[0])
             tk.Label(frame, text="Wskaźnik:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
             tk.OptionMenu(frame, metric_var, *metrics).pack(side=tk.LEFT)
+
+            tk.Button(
+                frame,
+                text="Usuń",
+                font=FONT_MAIN,
+                bg="#FEC89A",
+                command=lambda: [frame.destroy(), metric_vars.remove(metric_var)]
+            ).pack(side=tk.LEFT, padx=10)
+
             metric_vars.append(metric_var)
 
         # Dodanie pierwszego wskaźnika
@@ -245,7 +280,10 @@ def create_main_window():
                     if not filtered_data.empty:
                         metrics = calculate_liquidity(filtered_data)
                         print(f"Debug - Wyniki dla okresu {period}:", metrics)
-                        metric_results[period] = metrics.get(metric, 0.0)
+                        value = metrics.get(metric, 0.00000)
+                        metric_results[period] = metrics.get(metric, 0.00000)
+                    else:
+                        metric_results[period] = "Brak danych"
 
                 results[metric] = metric_results
 

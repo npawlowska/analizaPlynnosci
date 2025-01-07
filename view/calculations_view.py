@@ -107,7 +107,7 @@ def show_calculations(root, results):
         for col, (period, value) in enumerate(periods.items(), start=1):
             tk.Label(
                 frame,
-                text=f"{value:.2f}",
+                text=f"{value:.4f}",
                 font=FONT_MAIN,
                 bg="#FFFFFF",
                 fg=TEXT_COLOR,
