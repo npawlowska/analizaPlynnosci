@@ -1,6 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
 
+
 def get_db_connection():
     """
     Funkcja łącząca się z bazą danych MySQL.
@@ -37,9 +38,9 @@ def load_data_for_company_and_date(company, start_date, end_date):
         try:
             cursor = conn.cursor(dictionary=True)
             query = """
-                SELECT data, spolka, zamkniecie, wolumen, liczba_akcji
+                SELECT data, symbol, zamkniecie, wolumen, liczba_akcji, stopa_zwrotu
                 FROM akcje
-                WHERE spolka = %s AND data BETWEEN %s AND %s
+                WHERE symbol = %s AND data BETWEEN %s AND %s
             """
             cursor.execute(query, (company, start_date, end_date))
             result = cursor.fetchall()
@@ -66,7 +67,7 @@ def get_companies():
     if conn:
         try:
             cursor = conn.cursor()
-            query = "SELECT DISTINCT spolka FROM akcje"
+            query = "SELECT DISTINCT symbol FROM akcje"
             cursor.execute(query)
             result = [row[0] for row in cursor.fetchall() if row[0] is not None]
             return result
@@ -79,6 +80,7 @@ def get_companies():
     else:
         print("Brak połączenia z bazą danych.")
         return []
+
 
 if __name__ == "__main__":
     # Test połączenia z bazą

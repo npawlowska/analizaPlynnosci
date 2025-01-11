@@ -12,18 +12,17 @@ def filter_data_by_period(data, period):
     # Konwertujemy kolumnę 'data' na datetime
     data_df['data'] = pd.to_datetime(data_df['data'], errors='coerce')
 
-    if period == "przed COVID":
-        start_date = pd.to_datetime("2017-01-02")
+    if period == "przed pandemią COVID-19 (styczeń 2017 - luty 2020)":
+        start_date = pd.to_datetime("2017-01-01")
         end_date = pd.to_datetime("2020-02-28")
-    elif period == "w trakcie COVID":
-        start_date = pd.to_datetime("2020-03-02")
+    elif period == "w czasie okresu pandemii COVID-19 (marzec 2020 - kwiecień 2023)":
+        start_date = pd.to_datetime("2020-03-01")
         end_date = pd.to_datetime("2023-04-30")
-    elif period == "po COVID":
-        start_date = pd.to_datetime("2023-05-04")
+    elif period == "cała próba statystyczna (styczeń 2017 - wrzesień 2024)":
+        start_date = pd.to_datetime("2017-01-01")
         end_date = pd.to_datetime("2024-09-30")
-    else:  # całkowity okres
-        start_date = pd.to_datetime("2017-01-02")
-        end_date = pd.to_datetime("2024-09-30")
+    else:
+        raise ValueError(f"Nieznany okres: {period}")
 
     # Debugowanie zakresu dat
     print(f"Debug - Zakres dat dla okresu '{period}': {start_date} - {end_date}")
@@ -35,20 +34,9 @@ def filter_data_by_period(data, period):
     # Filtrujemy dane na podstawie okresu
     filtered_data = data_df[(data_df['data'] >= start_date) & (data_df['data'] <= end_date)]
 
-    # Debugowanie wyników filtrowania
-    print(f"Debug - Liczba rekordów po filtrowaniu dla okresu '{period}': {len(filtered_data)}")
-    print(filtered_data[['data']].drop_duplicates().sort_values(by='data').head(10))  # Wyświetl unikalne daty
-
-    print(f"Debug - Filtrowane dane przekazywane dalej dla okresu '{period}': {filtered_data.head(10)}")
-    print(f"Debug - Filtrowane dane: {filtered_data.head(10)}")
-    print(f"Debug - Final filtered data ready for processing: {filtered_data.head(10)}")
-    print(f"Debug - Filtered data being returned: {filtered_data.head(10)}")
-    print(f"Debug - Filtered data ready to use: {filtered_data.head(10)}")
-    print(f"Debug - Filtered data (final return):{filtered_data.head(10)}")
-    print("Debug - Filtered data (final return):")
-    print(filtered_data.head(10))
-    print("Debug - Filtered data (final return):")
-    print(filtered_data.head(10))
-    print(f"Debug - Filtered data before returning (rows: {len(filtered_data)}):")
-    print(filtered_data.head(10))
+    # Dodanie debugowania
+    print(f"Okres: {period}")
+    print(f"Data początkowa: {start_date}, Data końcowa: {end_date}")
+    print(f"Liczba dni w okresie: {len(filtered_data)}")
+    print(f"Przykładowe dane po filtrowaniu: {filtered_data.head()}")
     return filtered_data

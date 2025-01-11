@@ -1,8 +1,9 @@
 import tkinter as tk
 from view.graphs import generate_comparison_chart
-from database.database import load_data_for_company_and_date, get_companies
+from model.database import load_data_for_company_and_date, get_companies
 from controller.calculate_liquidity import calculate_liquidity
 from controller.data_controller import filter_data_by_period
+
 
 
 # Kolorystyka aplikacji
@@ -45,7 +46,7 @@ def create_main_window():
 
         tk.Label(root, text="Wybierz opcję porównania", font=FONT_TITLE, fg=TITLE_COLOR, bg=BACKGROUND_COLOR).pack(pady=20)
         tk.Button(root, text="Porównaj wskaźnik między spółkami", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_company_comparison_screen).pack(pady=10)
-        tk.Button(root, text="Porównaj wszystkie wskaźniki w jednej spółce", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_all_metrics_comparison_screen).pack(pady=10)
+        tk.Button(root, text="Porównaj wszystkie wskaźniki dla jednej spółki", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_all_metrics_comparison_screen).pack(pady=10)
         tk.Button(root, text="Powrót do menu głównego", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_calculation_menu).pack(pady=10)
 
     def show_company_comparison_screen():
@@ -61,7 +62,7 @@ def create_main_window():
         companies_frame.pack(pady=10)
 
         company_vars = []
-        periods = ["przed COVID", "w trakcie COVID", "po COVID", "cały okres"]
+        periods = ["przed pandemią COVID-19 (styczeń 2017 - luty 2020)", "w czasie okresu pandemii COVID-19 (marzec 2020 - kwiecień 2023)", "cała próba statystyczna (styczeń 2017 - wrzesień 2024)"]
         metric_var = tk.StringVar(root, value="Relative Volume (RV)")
         period1_var = tk.StringVar(root, value=periods[0])
         period2_var = tk.StringVar(root, value=periods[1])
@@ -108,7 +109,7 @@ def create_main_window():
         periods_frame.pack(pady=10)
 
         period_vars = []
-        periods = ["przed COVID", "w trakcie COVID", "po COVID", "cały okres"]
+        periods = ["przed pandemią COVID-19 (styczeń 2017 - luty 2020)", "w czasie okresu pandemii COVID-19 (marzec 2020 - kwiecień 2023)", "cała próba statystyczna (styczeń 2017 - wrzesień 2024)"]
 
         def add_period_row():
             frame = tk.Frame(periods_frame, bg=BACKGROUND_COLOR)
@@ -174,9 +175,8 @@ def create_main_window():
             widget.destroy()
 
         tk.Label(root, text="Porównaj wszystkie wskaźniki w jednej spółce", font=FONT_TITLE, fg=TITLE_COLOR, bg=BACKGROUND_COLOR).pack(pady=20)
-
         company_var = tk.StringVar(root, value=get_companies()[0])
-        periods = ["przed COVID", "w trakcie COVID", "po COVID", "cały okres"]
+        periods = ["przed pandemią COVID-19 (styczeń 2017 - luty 2020)", "w czasie okresu pandemii COVID-19 (marzec 2020 - kwiecień 2023)", "cała próba statystyczna (styczeń 2017 - wrzesień 2024)"]
 
         # Ramka dla wyboru spółki
         company_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
