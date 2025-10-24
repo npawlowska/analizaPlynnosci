@@ -1,19 +1,16 @@
 import tkinter as tk
 from view.graphs import generate_comparison_chart
-from model.database import load_data_for_company_and_date, get_companies
+from model.tests import load_data_for_company_and_date, get_companies
 from controller.calculate_liquidity import calculate_liquidity
 from controller.data_controller import filter_data_by_period
 
-
-
-# Kolorystyka aplikacji
 BACKGROUND_COLOR = "#D8E2DC"
 BUTTON_COLOR = "#FEC89A"
 BUTTON_HOVER_COLOR = "#FFE5D9"
 TEXT_COLOR = "#333333"
 TITLE_COLOR = "#6B4F4F"
 
-# Czcionki
+
 FONT_MAIN = ("Poppins", 14)
 FONT_SMALLER = ("Poppins", 17)
 FONT_TITLE = ("Poppins", 22, "bold")
@@ -26,9 +23,6 @@ def create_main_window():
     root.configure(bg=BACKGROUND_COLOR)
 
     def show_calculation_menu():
-        """
-        Wyświetla menu wyboru opcji obliczeń i wykresów.
-        """
         for widget in root.winfo_children():
             widget.destroy()
 
@@ -38,21 +32,15 @@ def create_main_window():
         tk.Button(root, text="Wyjście z aplikacji", font=FONT_MAIN, bg="#FFD7BA", activebackground=BUTTON_HOVER_COLOR, command=root.quit).pack(pady=10)
 
     def show_comparison_menu():
-        """
-        Wyświetla ekran wyboru między porównaniem wskaźników między spółkami i wszystkimi wskaźnikami w jednej spółce.
-        """
         for widget in root.winfo_children():
             widget.destroy()
 
         tk.Label(root, text="Wybierz opcję porównania", font=FONT_TITLE, fg=TITLE_COLOR, bg=BACKGROUND_COLOR).pack(pady=20)
         tk.Button(root, text="Porównaj wskaźnik między spółkami", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_company_comparison_screen).pack(pady=10)
-        tk.Button(root, text="Porównaj wszystkie wskaźniki dla jednej spółki", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_all_metrics_comparison_screen).pack(pady=10)
+        tk.Button(root, text="Porównaj wskaźniki dla jednej spółki", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_all_metrics_comparison_screen).pack(pady=10)
         tk.Button(root, text="Powrót do menu głównego", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_calculation_menu).pack(pady=10)
 
     def show_company_comparison_screen():
-        """
-        Wyświetla ekran porównania jednego wskaźnika między spółkami dla dwóch okresów.
-        """
         for widget in root.winfo_children():
             widget.destroy()
 
@@ -68,16 +56,12 @@ def create_main_window():
         period2_var = tk.StringVar(root, value=periods[1])
 
         def add_company_row():
-            """
-            Dodaje nowy wiersz wyboru spółki.
-            """
             frame = tk.Frame(companies_frame, bg=BACKGROUND_COLOR)
             frame.pack(pady=5)
 
             company_var = tk.StringVar(root, value=get_companies()[0])
             tk.Label(frame, text="Spółka:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT)
 
-            # Tworzenie OptionMenu z kolorami
             company_menu = tk.OptionMenu(frame, company_var, *get_companies())
             company_menu.config(bg="#FEC89A", fg="#333333", font=("Poppins", 12))  # Kolor przycisku
             company_menu["menu"].config(bg="#ECE4DB", fg="#333333")  # Kolor rozwijanego menu
@@ -93,18 +77,15 @@ def create_main_window():
 
             company_vars.append(company_var)
 
-        # Dodajemy pierwszy wiersz wyboru spółki
         add_company_row()
         tk.Button(root, text="Dodaj spółkę", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR,
                   command=add_company_row).pack(pady=10)
 
-        # Frame dla wyboru okresów
         period_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         period_frame.pack(pady=10)
 
         tk.Label(period_frame, text="Wybierz okresy:", bg=BACKGROUND_COLOR, font=FONT_MAIN, fg=TEXT_COLOR).pack(side=tk.LEFT,
                                                                                                          padx=5)
-        # Definicja ramki dla okresów przed jej użyciem
         periods_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         periods_frame.pack(pady=10)
 
@@ -168,13 +149,10 @@ def create_main_window():
         tk.Button(root, text="Powrót", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR, command=show_comparison_menu).pack(pady=10)
 
     def show_all_metrics_comparison_screen():
-        """
-        Wyświetla ekran porównania wszystkich wskaźników w jednej spółce dla dwóch okresów.
-        """
         for widget in root.winfo_children():
             widget.destroy()
 
-        tk.Label(root, text="Porównaj wszystkie wskaźniki w jednej spółce", font=FONT_TITLE, fg=TITLE_COLOR, bg=BACKGROUND_COLOR).pack(pady=20)
+        tk.Label(root, text="Porównaj wskaźniki dla jednej spółki", font=FONT_TITLE, fg=TITLE_COLOR, bg=BACKGROUND_COLOR).pack(pady=20)
         company_var = tk.StringVar(root, value=get_companies()[0])
         periods = ["przed pandemią COVID-19 (styczeń 2017 - luty 2020)", "w czasie okresu pandemii COVID-19 (marzec 2020 - kwiecień 2023)", "cała próba statystyczna (styczeń 2017 - wrzesień 2024)"]
 
@@ -189,7 +167,6 @@ def create_main_window():
         company_menu["menu"].config(bg="#ECE4DB", fg="#333333")
         company_menu.pack(side=tk.LEFT, padx=5)
 
-        # Ramka dla wyboru okresów
         period_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         period_frame.pack(pady=10)
 
@@ -219,13 +196,11 @@ def create_main_window():
 
             period_vars.append(period_var)
 
-        # Dodanie pierwszego wyboru okresu
         add_period_row()
 
         tk.Button(root, text="Dodaj okres", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR,
                   command=add_period_row).pack(pady=10)
 
-        # Ramka dla wyboru wskaźników
         metric_frame = tk.Frame(root, bg=BACKGROUND_COLOR)
         metric_frame.pack(pady=10)
 
@@ -250,7 +225,6 @@ def create_main_window():
 
             metric_vars.append(metric_var)
 
-        # Dodanie pierwszego wskaźnika
         add_metric_row()
 
         tk.Button(root, text="Dodaj wskaźnik", font=FONT_MAIN, bg=BUTTON_COLOR, activebackground=BUTTON_HOVER_COLOR,
@@ -267,7 +241,7 @@ def create_main_window():
 
             raw_data = load_data_for_company_and_date(selected_company, "2017-01-02", "2024-09-30")
 
-            print("Załadowane dane:", raw_data)  # Sprawdzenie, czy dane zostały załadowane
+            print("Załadowane dane:", raw_data)
 
             results = {}
 

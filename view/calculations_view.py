@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
 
-# Stałe dla stylu
+
 FONT_MAIN = ("Poppins", 12)
 FONT_TITLE = ("Poppins", 16, "bold")
 TITLE_COLOR = "#6B4F4F"
@@ -10,10 +10,8 @@ TEXT_COLOR = "#333333"
 BACKGROUND_COLOR = "#D8E2DC"
 HEADER_COLOR = "#FFD7BA"
 
+
 def save_results_to_excel(results):
-    """
-    Zapisuje wyniki obliczeń do pliku Excel (.xlsx).
-    """
     file_path = filedialog.asksaveasfilename(
         defaultextension=".xlsx",
         filetypes=[("Pliki Excel", "*.xlsx")],
@@ -47,7 +45,7 @@ def save_results_to_txt(results):
         title="Zapisz wyniki jako..."
     )
     if not file_path:
-        return  # Użytkownik anulował zapis
+        return
 
     with open(file_path, "w", encoding="utf-8") as file:
         file.write("Wyniki obliczeń:\n\n")
@@ -58,13 +56,11 @@ def save_results_to_txt(results):
             file.write("----------------------\n")
     print(f"Wyniki zapisano do pliku: {file_path}")
 
+
 def show_calculations(root, results):
-    """
-    Wyświetla wyniki obliczeń w nowym oknie i umożliwia ich eksport do pliku .txt.
-    """
     calculations_window = tk.Toplevel(root)
     calculations_window.title("Wyniki obliczeń")
-    calculations_window.geometry("600x400")
+    calculations_window.geometry("900x700")
     calculations_window.configure(bg=BACKGROUND_COLOR)
 
     tk.Label(
@@ -78,7 +74,7 @@ def show_calculations(root, results):
     frame = tk.Frame(calculations_window, bg="#D8E2DC")
     frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=10)
 
-    # Nagłówki tabeli
+
     headers = ["Wskaźnik/Spółka"] + list(results[list(results.keys())[0]].keys())
     for col, header in enumerate(headers):
         tk.Label(
@@ -92,7 +88,6 @@ def show_calculations(root, results):
             pady=5,
         ).grid(row=0, column=col, sticky="nsew")
 
-    # Dane wynikowe
     for row, (label, periods) in enumerate(results.items(), start=1):
         tk.Label(
             frame,
@@ -116,7 +111,6 @@ def show_calculations(root, results):
                 pady=5,
             ).grid(row=row, column=col, sticky="nsew")
 
-    # Przycisk zapisu do pliku .txt
     tk.Button(
         calculations_window,
         text="Eksportuj do .txt",
@@ -126,17 +120,15 @@ def show_calculations(root, results):
         command=lambda: save_results_to_txt(results)
     ).pack(pady=10)
 
-    # Przycisk zapisu do pliku .xlsx
     tk.Button(
         calculations_window,
-        text="Eksportuj do Excela",
+        text="Eksportuj do .xlsx",
         font=FONT_MAIN,
         bg="#FFD7BA",
         activebackground="#FFB6C1",
         command=lambda: save_results_to_excel(results)
     ).pack(pady=5)
 
-    # Przycisk zamknięcia
     tk.Button(
         calculations_window,
         text="Zamknij",

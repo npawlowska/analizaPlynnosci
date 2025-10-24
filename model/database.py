@@ -1,18 +1,18 @@
 import mysql.connector
 from mysql.connector import Error
 
+print("⚡ Skrypt database.py został uruchomiony!")
 
 def get_db_connection():
-    """
-    Funkcja łącząca się z bazą danych MySQL.
-    """
     try:
         conn = mysql.connector.connect(
-            host="localhost",          # Adres serwera bazy danych
+            host="127.0.0.1", # Adres serwera bazy danych
+            port='3306',
             user="root",               # Nazwa użytkownika MySQL
             password="admin",          # Hasło użytkownika MySQL
             database="spolka_baza"     # Nazwa bazy danych
         )
+
         if conn.is_connected():
             print("Połączono z bazą danych.")
             return conn
@@ -22,17 +22,6 @@ def get_db_connection():
 
 
 def load_data_for_company_and_date(company, start_date, end_date):
-    """
-    Pobiera dane dla wybranej spółki i zakresu dat.
-
-    Args:
-        company (str): Nazwa spółki.
-        start_date (str): Data początkowa w formacie YYYY-MM-DD.
-        end_date (str): Data końcowa w formacie YYYY-MM-DD.
-
-    Returns:
-        list: Lista słowników z wynikami zapytania.
-    """
     conn = get_db_connection()
     if conn:
         try:
@@ -57,12 +46,6 @@ def load_data_for_company_and_date(company, start_date, end_date):
 
 
 def get_companies():
-    """
-    Pobiera listę unikalnych nazw spółek z bazy danych.
-
-    Returns:
-        list: Lista nazw spółek (str).
-    """
     conn = get_db_connection()
     if conn:
         try:
